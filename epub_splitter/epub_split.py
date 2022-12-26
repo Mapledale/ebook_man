@@ -2,10 +2,10 @@
 # _*_ encoding: utf-8 _*_
 
 from distutils.dir_util import copy_tree
-import xml.etree.ElementTree as ET
 import fileinput
 import os
 import shutil
+import xml.etree.ElementTree as ET
 from zipfile import ZipFile
 
 
