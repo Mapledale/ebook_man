@@ -1,0 +1,140 @@
+This is a note on how to unpack an epub file, which contains multiple books,
+into epub files that each for one book.
+
+1. Copy the packed epub file but change the extension name to .zip
+
+2. Unpack this .zip file, it may contain the following folders and files:
+    |-- /images  # image files of all books
+    |-- /META-INF
+    |       |-- container.xml
+    |-- /text  # .html files, each for one section of every books
+    |   content.opf  # Open Package Format file - important
+    |   cover.jpeg  # for the series
+    |   mimetype  # defines the file format (e.g. application/epub+zip)
+    |   page_styles.css
+    |   stylesheet.css
+    |   titlepage.xhtml  # for the series, containing ref. to cover.jpeg
+    |   toc.ncx  # toc of all books
+
+2a. content.opf
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="uuid_id">
+  <metadata xmlns:opf="...: xmlns:dc="..." xmlns:dcterms="..." xmlns:xsi="..." xmlns:calibre="...">
+    <dc:language>zh</dc:language>
+    <dc:title><series_title></dc:title>
+    <dc:creator opf:file-as="<authors>" opf:role="aut"><author></dc:creator>
+    ...
+    <dc:contributor opf:role="bkp">calibre (5.34.0) [https://calibre-ebook.com]</dc:contributor>
+    <dc:publisher>社会科学文献出版社</dc:publisher>
+    <dc:identifier opf:scheme="MOBI-ASIN">B0BLB417CF</dc:identifier>
+    <dc:identifier id="uuid_id" opf:scheme="uuid">943baa8a-0df1-4ef4-9ad3-712d9f41bd61</dc:identifier>
+    <dc:identifier opf:scheme="calibre">943baa8a-0df1-4ef4-9ad3-712d9f41bd61</dc:identifier>
+    <dc:date>2022-11-02T16:00:00+00:00</dc:date>
+    <meta name="calibre:timestamp" content="2022-11-12T00:16:03.441892+00:00"/>
+    <meta name="calibre:title_sort" content="<series_title>"/>
+    <dc:subject>-SanQiu.mobi</dc:subject>
+    <meta name="cover" content="cover"/>
+    <meta name="primary-writing-mode" content="horizontal-lr"/>
+  </metadata>
+  <manifest>
+    <item id="cover" href="cover.jpeg" media-type="image/jpeg"/>
+    <item id="titlepage" href="titlepage.xhtml" media-type="application/xhtml+xml"/>
+    <item id="id266" href="text/part0000.html" media-type="application/xhtml+xml"/>
+    ...
+    <item id="id384" href="text/part0118.html" media-type="application/xhtml+xml"/>
+    <item id="id3852" href="text/part0119_split_000.html" media-type="application/xhtml+xml"/>
+    <item id="id3851" href="text/part0119_split_001.html" media-type="application/xhtml+xml"/>
+    <item id="id386" href="text/part0120.html" media-type="application/xhtml+xml"/>
+    ...
+    <item id="id410" href="text/part0144.html" media-type="application/xhtml+xml"/>
+    <item id="id1" href="images/00001.jpeg" media-type="image/jpeg"/>
+    ...
+    <item id="id229" href="images/00229.jpeg" media-type="image/jpeg"/>
+    <item id="page_css" href="page_styles.css" media-type="text/css"/>
+    <item id="css" href="stylesheet.css" media-type="text/css"/>
+    <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="titlepage"/>
+    <itemref idref="id266"/>
+    ...
+    <itemref idref="id384"/>
+    <itemref idref="id3852"/>
+    <itemref idref="id3851"/>
+    <itemref idref="id386"/>
+    ...
+    <itemref idref="id410"/>
+  </spine>
+  <guide>
+    <reference type="toc" href="text/part0000.html#0-1d6051562fb44da1958a290c6b18b204" title="总目录"/>
+    <reference type="cover" href="titlepage.xhtml" title="Cover"/>
+  </guide>
+</package>
+
+2b. toc.ncx
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="..." version="2005-1" xml:lang="zho">
+  <head>
+    <meta name="..." content="..."/>
+    ...
+  </head>
+  <docTitle>
+    <text><series_title></text>
+  </docTitle>
+  <navMap>
+    <navPoint id="num_1" playOrder="0" class="chapter">
+      <navLabel>
+        <text>总目录</text>
+      </navLabel>
+      <content src="text/part0000.html#0-1d6051562fb44da1958a290c6b18b204"/>
+    </navPoint>
+    <navPoint id="num_2" playOrder="1" class="chapter">
+      <navLabel>
+        <text>秘密村庄：维希法国的抵抗运动</text>
+      </navLabel>
+      <content src="text/part0001.html#UGI0-1d6051562fb44da1958a290c6b18b204"/>
+      <navPoint id="num_3" playOrder="2" class="chapter">
+        <navLabel>
+          <text>前折页</text>
+        </navLabel>
+        <content src="text/part0002.html#1T140-1d6051562fb44da1958a290c6b18b204"/>
+      </navPoint>
+      ...
+      <navPoint id="num_38" playOrder="37" class="chapter">
+        <navLabel>
+          <text>封底</text>
+        </navLabel>
+        <content src="text/part0035.html#11C3M0-1d6051562fb44da1958a290c6b18b204"/>
+      </navPoint>
+    </navPoint>
+    <navPoint id="num_39" playOrder="38" class="chapter">
+      <navLabel>
+        <text>冬日列车：维希政权与纳粹集中营里的法国女性</text>
+      </navLabel>
+      <content src="text/part0036.html#12AK80-1d6051562fb44da1958a290c6b18b204"/>
+      ...
+    </navPoint>
+  </navMap>
+</ncx>
+
+3. Unpacking the series to individual books including:
+    create a folder for each book
+    cpoy the folder and files from the original series folder:
+        /META-INF
+            |-- container.xml
+        mimetype
+        page_styles.css
+        stylesheet.css
+    create empty folders
+        images
+        text
+    Following files will be picked or tailored to fit each individual books:
+        image files
+        text files
+        content.opf
+        toc.ncx
+    These 2 files could be skipped:
+        cover.jpeg
+        titlepage.xhtml
+
+4. 
